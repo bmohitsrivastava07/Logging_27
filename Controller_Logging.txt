@@ -299,13 +299,19 @@ public class ProductController {
 		logger.info("Checking out product with ID {} for user: {}", productId, userEmail);
 		return productService.checkoutProduct(userEmail, productId);
 	}
-
-	@PutMapping("/secure/return")
-	public void returnProduct(@RequestParam Long productId) throws Exception {
-		String userEmail = "mohit@gmail.com";
-		logger.info("Returning product with ID {} for user: {}", productId, userEmail);
-		productService.returnProduct(userEmail, productId);
-	}
+		
+@PutMapping("/secure/return")
+public void returnProduct(@RequestParam Long productId) throws Exception {
+    String userEmail = "mohit@gmail.com";
+    logger.info("Returning product with ID {} for user: {}", productId, userEmail);
+    try {
+        productService.returnProduct(userEmail, productId);
+    } catch (EmptyResultDataAccessException ex) {
+        logger.error("Error returning product with ID {}: {}", productId, ex.getMessage());
+        throw new Exception("Product not found or not checked out by the user.");
+    }
+}
+	 
 
 	@PutMapping("/secure/renew/loan")
 	public void renewLoan(@RequestParam Long productId) throws Exception {
