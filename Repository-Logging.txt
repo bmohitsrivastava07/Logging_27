@@ -193,13 +193,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 }
 _________________________________________________________________________________________
 
-
-6)Review Repository:
---------------------
-
-package com.ArtGalleryManagement.Backend.Repository;
-
-import com.ArtGalleryManagement.Backend.Entity.Review;
+6.Review Repository:
+-----------------------------------------------------------------
+ import com.ArtGalleryManagement.Backend.Entity.Review;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -212,26 +208,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    Logger logger = LoggerFactory.getLogger(ReviewRepository.class);
-
-    Page<Review> findByProductId(@RequestParam("product_id") Long productId, Pageable pageable);
-
-    Review findByUserEmailAndProductId(String userEmail, Long productId);
-
-    @Modifying
-    @Query("delete from Review where product_id in :product_id")
-    void deleteAllByProductId(@Param("product_id") Long productId);
-
     // Add logging statements 
     default Page<Review> findByProductIdWithLogging(Long productId, Pageable pageable) {
+        Logger logger = getLogger();
         logger.info("Searching for Reviews by product ID: {}", productId);
         return findByProductId(productId, pageable);
     }
 
     // Add logging statements 
     default Review findByUserEmailAndProductIdWithLogging(String userEmail, Long productId) {
+        Logger logger = getLogger();
         logger.info("Searching for Review by user email: {} and product ID: {}", userEmail, productId);
         return findByUserEmailAndProductId(userEmail, productId);
     }
+
+    // Helper method to obtain logger instance
+    default Logger getLogger() {
+        return LoggerFactory.getLogger(this.getClass());
+    }
 }
+
 __________________________________________________________________________________________
