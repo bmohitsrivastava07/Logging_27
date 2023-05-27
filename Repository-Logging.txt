@@ -194,41 +194,48 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 _________________________________________________________________________________________
 
 6.Review Repository:
------------------------------------------------------------------
+----------------------------------------------------------------
+
  import com.ArtGalleryManagement.Backend.Entity.Review;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.springframework.stereotype.Components;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+    Page<Review> findByProductId(Long productId, Pageable pageable);
 
-    // Added logging statements 
+    Review findByUserEmailAndProductId(String userEmail, Long productId);
+
+    @Query("delete from Review where product_id = :product_id")
+    void deleteAllByProductId(@Param("product_id") Long productId);
+
+    // Added logging statements
     default Page<Review> findByProductIdWithLogging(Long productId, Pageable pageable) {
-        Logger logger = getLogger();
+        Logger logger = LoggerFactory.getLogger(ReviewRepository.class);
         logger.info("Searching for Reviews by product ID: {}", productId);
         return findByProductId(productId, pageable);
     }
 
-    // Added logging statements 
+    // Added logging statements
     default Review findByUserEmailAndProductIdWithLogging(String userEmail, Long productId) {
-        Logger logger = getLogger();
+        Logger logger = LoggerFactory.getLogger(ReviewRepository.class);
         logger.info("Searching for Review by user email: {} and product ID: {}", userEmail, productId);
         return findByUserEmailAndProductId(userEmail, productId);
     }
 
-    // Helper method to obtain logger instance
-    default Logger getLogger() {
-        return LoggerFactory.getLogger(this.getClass());
+    // Added logging statements
+    default void deleteAllByProductIdWithLogging(Long productId) {
+        Logger logger = LoggerFactory.getLogger(ReviewRepository.class);
+        logger.info("Deleting Reviews by product ID: {}", productId);
+        deleteAllByProductId(productId);
     }
 }
 
+}
 __________________________________________________________________________________________
