@@ -194,7 +194,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 _________________________________________________________________________________________
 
 
-6)package com.ArtGalleryManagement.Backend.Repository;
+6)Review Repository:
+--------------------
+
+package com.ArtGalleryManagement.Backend.Repository;
 
 import com.ArtGalleryManagement.Backend.Entity.Review;
 import org.slf4j.Logger;
